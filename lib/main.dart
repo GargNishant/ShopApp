@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopapp/product/product_overview_route.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,8 +10,9 @@ class MyApp extends StatelessWidget {
       title: 'MyShop',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: "Lato",
       ),
-      home: MyHomePage(),
+      home: ProductOverviewRoute(),
     );
   }
 }
@@ -19,12 +21,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('MyShop'),
-      ),
-      body: Center(
-        child: Text('Let\'s build a shop!'),
-      ),
+      appBar: AppBar(title: Text('MyShop')),
+      body: Center(child: Text('Let\'s build a shop!')),
     );
   }
 }
