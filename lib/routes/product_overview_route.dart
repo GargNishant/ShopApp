@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shopapp/product/product.dart';
-import 'package:shopapp/product/product_widget.dart';
+import 'package:shopapp/models/product.dart';
+import 'package:shopapp/widgets/product_widget.dart';
 
 class ProductOverviewRoute extends StatelessWidget {
   final List<Product> loadedProducts = [
