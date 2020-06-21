@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shopapp/models/product.dart';
+import 'package:shopapp/repository/product.dart';
 import 'package:shopapp/widgets/product_grid_widget.dart';
 
 class ProductOverviewRoute extends StatelessWidget {
