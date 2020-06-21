@@ -48,6 +48,10 @@ class ProductProvider with ChangeNotifier {
     return [..._productList];
   }
 
+  List<Product> get favouritesList{
+    return _productList.where((element) => element.isFavourite).toList();
+  }
+
   /// Adding a new Item into the Existing List of products
   /// Calling the NotifyListeners is like calling setValue in Observers. But on all the member variables
   void addProduct(Product product) {
