@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopapp/repository/product_provider.dart';
+import 'package:shopapp/routes/product_detail_route.dart';
 import 'package:shopapp/routes/product_overview_route.dart';
 
 void main() => runApp(MyApp());
@@ -17,6 +18,10 @@ class MyApp extends StatelessWidget {
             fontFamily: "Lato",
           ),
           home: ProductOverviewRoute(),
+          routes: {
+            '/': (ctx) => ProductOverviewRoute(),
+            ProductDetailRoute.routeName : (ctx) => ProductDetailRoute(),
+          },
         ));
   }
 }
