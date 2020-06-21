@@ -9,6 +9,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // When Initializing a class, use without value, and when using existing
+    // instance, use value
     return ChangeNotifierProvider(
         create: (buildContext) => ProductProvider(),
         child: MaterialApp(
