@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             fontFamily: "Lato",
           ),
-          home: ProductOverviewRoute(),
+          initialRoute: "/",
           routes: {
             '/': (ctx) => ProductOverviewRoute(),
             ProductDetailRoute.routeName : (ctx) => ProductDetailRoute(),
