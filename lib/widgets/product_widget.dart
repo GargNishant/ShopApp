@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:shopapp/models/product.dart';
+import 'package:provider/provider.dart';
+import 'package:shopapp/repository/product.dart';
 import 'package:shopapp/routes/product_detail_route.dart';
 
 class ProductWidget extends StatelessWidget {
-  final Product _product;
 
-  ProductWidget(this._product);
-
-  void _navigation(BuildContext context){
+  void _navigation(BuildContext context, var _product){
     Navigator.pushNamed(context, ProductDetailRoute.routeName,arguments: _product.id);
   }
 
   @override
   Widget build(BuildContext context) {
+    //Listening to the Provider of this product only
+    final _product = Provider.of<Product>(context);
+
     return GridTile(
       child: GestureDetector(
-        onTap: () => _navigation(context),
+        onTap: () => _navigation(context,_product),
         child: Image.network(_product.imageUrl),
       ),
       footer: GridTileBar(
@@ -25,8 +26,8 @@ class ProductWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         leading: IconButton(
-          icon: Icon(Icons.favorite_border),
-          onPressed: () {},
+          icon: Icon(_product.isFavourite ? Icons.favorite : Icons.favorite_border),
+          onPressed: _product.toggleFavoriteStatus,
         ),
         trailing: IconButton(
           icon: Icon(Icons.shopping_cart),
