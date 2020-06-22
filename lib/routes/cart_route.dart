@@ -9,6 +9,7 @@ class CartRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final _cartProvider = Provider.of<CartProvider>(context);
     final _cartItemList = _cartProvider.itemList;
+    final _cartProdIdList = _cartProvider.keyList;
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Cart"),
@@ -46,7 +47,7 @@ class CartRoute extends StatelessWidget {
             child: ListView.builder(
               itemCount: _cartProvider.itemCount,
               itemBuilder: (context,index) {
-                return CartItemWidget(_cartItemList[index]);
+                return CartItemWidget(_cartItemList[index],_cartProdIdList[index]);
               },
             ),
           ),

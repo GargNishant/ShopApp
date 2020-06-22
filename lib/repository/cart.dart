@@ -28,6 +28,10 @@ class CartProvider with ChangeNotifier {
     return [...items.values.toList()];
   }
 
+  List<String> get keyList {
+    return [...items.keys.toList()];
+  }
+
   int get itemCount{
     return _cartItems.length;
   }
@@ -58,6 +62,11 @@ class CartProvider with ChangeNotifier {
               price: price,
               quantity: 1));
     }
+    notifyListeners();
+  }
+
+  void removeItem(String productId){
+    _cartItems.remove(productId);
     notifyListeners();
   }
 }
