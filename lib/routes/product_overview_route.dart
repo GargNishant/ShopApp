@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/repository/cart.dart';
 import 'package:shopapp/repository/product.dart';
 import 'package:shopapp/repository/product_provider.dart';
+import 'package:shopapp/widgets/cart_badge.dart';
 import 'package:shopapp/widgets/product_widget.dart';
 
-enum FilterOptions{
-  Favourites,
-  All
-}
+enum FilterOptions { Favourites, All }
 
 class ProductOverviewRoute extends StatefulWidget {
   @override
@@ -22,7 +21,18 @@ class _ProductOverviewRouteState extends State<ProductOverviewRoute> {
         appBar: AppBar(
           title: const Text("MyShop"),
           actions: <Widget>[
+            Consumer<CartProvider>(
+              builder: (ctx, cartProvider, childIcon) => CartBadge(
+                child: childIcon,
+                value: cartProvider.itemCount.toString(),
+              ),
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.shopping_cart),
+              ),
+            ),
             PopupMenuButton(
+              icon: const Icon(Icons.more_vert),
               onSelected: (FilterOptions selectedValue) {
                 setState(() {
                   if (selectedValue == FilterOptions.Favourites)
@@ -30,9 +40,7 @@ class _ProductOverviewRouteState extends State<ProductOverviewRoute> {
                   else
                     _showFavourites = false;
                 });
-
               },
-              icon: const Icon(Icons.more_vert),
               itemBuilder: (ctx) => [
                 const PopupMenuItem(
                   child: Text("Only Favourites"),
@@ -43,22 +51,23 @@ class _ProductOverviewRouteState extends State<ProductOverviewRoute> {
                   value: FilterOptions.All,
                 ),
               ],
-            )
+            ),
           ],
         ),
         body: Consumer<ProductProvider>(
           builder: (ctx, productProvider, child) => GridView.builder(
-            itemCount: _showFavourites ? productProvider.favouritesList.length : productProvider.productList.length,
+            itemCount: _showFavourites
+                ? productProvider.favouritesList.length
+                : productProvider.productList.length,
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 400,
                 childAspectRatio: 16 / 9,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10),
             itemBuilder: (ctx, index) {
-              List<Product> list = _showFavourites ? productProvider.favouritesList : productProvider.productList;
-              /*We are returning Observer for each of product individually. With this the individual Widgets, will
-            not be rebuilding in change in some other item changes. Value binds the Notifier with it's values,
-            thus recycling it along with widget for List item* */
+              List<Product> list = _showFavourites
+                  ? productProvider.favouritesList
+                  : productProvider.productList;
               return ChangeNotifierProvider.value(
                 value: list[index],
                 child: ProductWidget(),
