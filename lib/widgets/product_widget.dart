@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/repository/cart.dart';
 import 'package:shopapp/repository/product.dart';
 import 'package:shopapp/routes/product_detail_route.dart';
 
@@ -11,8 +12,8 @@ class ProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Listening to the Provider of this product only
     final _product = Provider.of<Product>(context, listen: false);
+    final _cart = Provider.of<CartProvider>(context, listen: false);
 
     return GridTile(
       child: GestureDetector(
@@ -34,7 +35,7 @@ class ProductWidget extends StatelessWidget {
                 )),
         trailing: IconButton(
           icon: Icon(Icons.shopping_cart),
-          onPressed: () {},
+          onPressed: () => _cart.addItem(_product.id, _product.price, _product.title),
         ),
       ),
     );
