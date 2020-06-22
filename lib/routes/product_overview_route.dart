@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopapp/repository/cart.dart';
 import 'package:shopapp/repository/product.dart';
 import 'package:shopapp/repository/product_provider.dart';
+import 'package:shopapp/routes/cart_route.dart';
 import 'package:shopapp/widgets/cart_badge.dart';
 import 'package:shopapp/widgets/product_widget.dart';
 
@@ -11,6 +12,10 @@ enum FilterOptions { Favourites, All }
 class ProductOverviewRoute extends StatefulWidget {
   @override
   _ProductOverviewRouteState createState() => _ProductOverviewRouteState();
+}
+
+void _cartRouteNavigation(BuildContext context){
+  Navigator.of(context).pushNamed(CartRoute.routeName);
 }
 
 class _ProductOverviewRouteState extends State<ProductOverviewRoute> {
@@ -27,7 +32,7 @@ class _ProductOverviewRouteState extends State<ProductOverviewRoute> {
                 value: cartProvider.itemCount.toString(),
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () => _cartRouteNavigation(context),
                 icon: Icon(Icons.shopping_cart),
               ),
             ),

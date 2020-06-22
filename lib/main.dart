@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopapp/repository/cart.dart';
 import 'package:shopapp/repository/product_provider.dart';
+import 'package:shopapp/routes/cart_route.dart';
 import 'package:shopapp/routes/product_detail_route.dart';
 import 'package:shopapp/routes/product_overview_route.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
             routes: {
               '/': (ctx) => ProductOverviewRoute(),
               ProductDetailRoute.routeName : (ctx) => ProductDetailRoute(),
+              CartRoute.routeName: (ctx) => CartRoute(),
             },
           ),
     );
