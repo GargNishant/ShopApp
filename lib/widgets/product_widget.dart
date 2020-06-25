@@ -27,7 +27,7 @@ class ProductWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         leading: Consumer<Product>(
-            builder: (ctx,productInstance, child) => IconButton(
+            builder: (ctx, productInstance, child) => IconButton(
                   icon: Icon(productInstance.isFavourite
                       ? Icons.favorite
                       : Icons.favorite_border),
@@ -35,7 +35,17 @@ class ProductWidget extends StatelessWidget {
                 )),
         trailing: IconButton(
           icon: Icon(Icons.shopping_cart),
-          onPressed: () => _cart.addItem(_product.id, _product.price, _product.title),
+          onPressed: () {
+            _cart.addItem(_product.id, _product.price, _product.title);
+            Scaffold.of(context).hideCurrentSnackBar();
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text("${_product.title} Added"),
+              action: SnackBarAction(
+                label: "UNDO",
+                onPressed: () => _cart.removeSingleItem(_product.id),
+              ),
+            ));
+          },
         ),
       ),
     );
