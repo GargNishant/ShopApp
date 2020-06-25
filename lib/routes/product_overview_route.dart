@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/main_drawer.dart';
 import 'package:shopapp/repository/cart.dart';
 import 'package:shopapp/repository/product.dart';
 import 'package:shopapp/repository/product_provider.dart';
@@ -79,6 +80,8 @@ class _ProductOverviewRouteState extends State<ProductOverviewRoute> {
               );
             },
           ),
-        ));
+        ),
+      drawer: MainDrawer(),
+    );
   }
 }

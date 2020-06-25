@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopapp/main_drawer.dart';
 import 'package:shopapp/repository/order.dart';
 import 'package:shopapp/widgets/order_item_widget.dart';
 
 class OrdersRoute extends StatelessWidget {
+  static const routeName = "/order-route";
+
   @override
   Widget build(BuildContext context) {
     final _orderProvider = Provider.of<OrderProvider>(context);
@@ -18,6 +21,7 @@ class OrdersRoute extends StatelessWidget {
         },
         itemCount: _orderList.length,
       ),
+      drawer: MainDrawer(),
     );
   }
 }
