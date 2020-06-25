@@ -4,6 +4,7 @@ import 'package:shopapp/repository/cart.dart';
 import 'package:shopapp/repository/order.dart';
 import 'package:shopapp/repository/product_provider.dart';
 import 'package:shopapp/routes/cart_route.dart';
+import 'package:shopapp/routes/order_route.dart';
 import 'package:shopapp/routes/product_detail_route.dart';
 import 'package:shopapp/routes/product_overview_route.dart';
 
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
               '/': (ctx) => ProductOverviewRoute(),
               ProductDetailRoute.routeName : (ctx) => ProductDetailRoute(),
               CartRoute.routeName: (ctx) => CartRoute(),
+              OrdersRoute.routeName: (ctx) => OrdersRoute(),
             },
           ),
     );
