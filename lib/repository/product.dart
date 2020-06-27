@@ -61,4 +61,15 @@ class Product with ChangeNotifier {
     isFavourite = !isFavourite;
     notifyListeners();
   }
+
+  Object toJsonMap() {
+    Map<String, Object> map = Map();
+    map["title"] = this.title;
+    map["price"] = this.price;
+    map['description'] = this.description;
+    map['isFavourite'] = this.isFavourite;
+    map['imageUrl'] = this.imageUrl;
+    map['id'] = this.id;
+    return map;
+  }
 }

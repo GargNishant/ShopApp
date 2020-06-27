@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shopapp/repository/product.dart';
+import 'package:http/http.dart' as http;
 
 class ProductProvider with ChangeNotifier {
   List<Product> _productList = List();
@@ -55,17 +58,22 @@ class ProductProvider with ChangeNotifier {
   /// Adding a new Item into the Existing List of products
   /// Calling the NotifyListeners is like calling setValue in Observers. But on all the member variables
   void addProduct(Product product) {
-    final _product = Product(
-        title: product.title,
-        description: product.description,
-        id: DateTime.now().toString(),
-        imageUrl: product.imageUrl,
-        price: product.price,
-        isFavourite: product.isFavourite);
 
-    _productList.add(_product);
-    _idProductMap[_product.id] = _product;
-    notifyListeners();
+    const url = "https://flutter-shop-e0ed8.firebaseio.com/products.json";
+    http.post(url,body: json.encode(product.toJsonMap())).then((response) {
+      print(json.decode(response.body));
+      final _product = Product(
+          title: product.title,
+          description: product.description,
+          id: json.decode(response.body)['name'],
+          imageUrl: product.imageUrl,
+          price: product.price,
+          isFavourite: product.isFavourite);
+
+      _productList.add(_product);
+      _idProductMap[_product.id] = _product;
+      notifyListeners();
+    });
   }
 
   Product getProduct(String id) {
