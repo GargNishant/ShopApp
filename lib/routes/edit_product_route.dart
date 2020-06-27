@@ -81,7 +81,7 @@ class _EditProductRouteState extends State<EditProductRoute> {
                       description: _editedProduct.description);
                 },
                 validator: (value){
-                  if(value.isEmpty)
+                  if(value.isEmpty || value.trim().isEmpty)
                     return "Please Enter valid Title";
                   return null;
                 },
@@ -100,7 +100,17 @@ class _EditProductRouteState extends State<EditProductRoute> {
                         imageUrl: _editedProduct.imageUrl,
                         id: _editedProduct.id,
                         description: _editedProduct.description);
-                  }),
+                  },
+                validator: (value){
+                    if (value.isEmpty)
+                      return "Please Enter a price";
+                    if(double.tryParse(value) == null || double.tryParse(value) < 0)
+                      return "Please enter Valid Price";
+                    if(double.tryParse(value) == 0)
+                      return "Price cannot be zero";
+                   return null;
+                },
+              ),
 
               TextFormField(
                   decoration: InputDecoration(labelText: "Description"),
@@ -115,7 +125,13 @@ class _EditProductRouteState extends State<EditProductRoute> {
                         imageUrl: _editedProduct.imageUrl,
                         id: _editedProduct.id,
                         description: value);
-                  }),
+                  },
+                  validator: (value){
+                    if(value.isEmpty || value.trim().isEmpty)
+                      return "Please Enter a Description";
+                    return null;
+                  }
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
@@ -150,7 +166,13 @@ class _EditProductRouteState extends State<EditProductRoute> {
                               imageUrl: value,
                               id: _editedProduct.id,
                               description: _editedProduct.description);
-                        }),
+                        },
+                      validator: (value){
+                          if(value.isEmpty || value.trim().isEmpty)
+                            return "Please enter a URL";
+                          return null;
+                      },
+                    ),
                   ),
                 ],
               ),
