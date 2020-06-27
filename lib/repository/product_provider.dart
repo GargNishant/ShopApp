@@ -57,10 +57,9 @@ class ProductProvider with ChangeNotifier {
 
   /// Adding a new Item into the Existing List of products
   /// Calling the NotifyListeners is like calling setValue in Observers. But on all the member variables
-  void addProduct(Product product) {
-
+  Future<void> addProduct(Product product) {
     const url = "https://flutter-shop-e0ed8.firebaseio.com/products.json";
-    http.post(url,body: json.encode(product.toJsonMap())).then((response) {
+    return http.post(url,body: json.encode(product.toJsonMap())).then((response) {
       print(json.decode(response.body));
       final _product = Product(
           title: product.title,
@@ -73,6 +72,9 @@ class ProductProvider with ChangeNotifier {
       _productList.add(_product);
       _idProductMap[_product.id] = _product;
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
   }
 

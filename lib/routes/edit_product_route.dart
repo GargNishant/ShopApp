@@ -20,6 +20,7 @@ class _EditProductRouteState extends State<EditProductRoute> {
   var initialized = false;
   var _editedProduct =
       Product(id: null, title: "", price: 0, imageUrl: "", description: "");
+  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -58,14 +59,33 @@ class _EditProductRouteState extends State<EditProductRoute> {
   }
 
   void _saveForm() {
-    if (_form.currentState.validate()) {
-      _form.currentState.save();
-      final _productProvider =
-          Provider.of<ProductProvider>(context, listen: false);
-      if (_editedProduct.id == null)
-        _productProvider.addProduct(_editedProduct);
-      else
-        _productProvider.updateProduct(_editedProduct);
+    if (!_form.currentState.validate()) return;
+    _form.currentState.save();
+    final _productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    if (_editedProduct.id == null) {
+      _productProvider.addProduct(_editedProduct).catchError((error) {
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+              title: Text('An error occurred!'),
+              content: Text('Something went wrong.'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                )
+              ]),
+        );
+      }).then((value) {
+        setState(() => _isLoading = false);
+        Navigator.of(context).pop();
+      });
+      setState(() => _isLoading = true);
+    } else {
+      _productProvider.updateProduct(_editedProduct);
       Navigator.of(context).pop();
     }
   }
@@ -74,7 +94,8 @@ class _EditProductRouteState extends State<EditProductRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(_editedProduct.id == null ? "Edit Product": "Add Product"),
+          title:
+              Text(_editedProduct.id == null ? "Edit Product" : "Add Product"),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.save),
@@ -82,108 +103,114 @@ class _EditProductRouteState extends State<EditProductRoute> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _form,
-            child: ListView(
-              children: <Widget>[
-                TextFormField(
-                  initialValue: _editedProduct.title,
-                  decoration: InputDecoration(
-                    labelText: "Title",
-                  ),
-                  textInputAction: TextInputAction.next,
-                  onFieldSubmitted: (value) =>
-                      FocusScope.of(context).requestFocus(_priceFocusNode),
-                  onSaved: (value) => _editedProduct =
-                      Product.cloneProductWithTitle(value, _editedProduct),
-                  validator: (value) {
-                    if (value.isEmpty || value.trim().isEmpty)
-                      return "Please Enter valid Title";
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  initialValue: _editedProduct.price == 0
-                      ? ""
-                      : _editedProduct.price.toString(),
-                  decoration: InputDecoration(labelText: "Price"),
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
-                  focusNode: _priceFocusNode,
-                  onFieldSubmitted: (value) => FocusScope.of(context)
-                      .requestFocus(_descriptionFocusNode),
-                  onSaved: (value) => _editedProduct =
-                      Product.cloneProductWithPrice(
-                          double.tryParse(value), _editedProduct),
-                  validator: (value) {
-                    if (value.isEmpty) return "Please Enter a price";
-                    if (double.tryParse(value) == null ||
-                        double.tryParse(value) < 0)
-                      return "Please enter Valid Price";
-                    if (double.tryParse(value) == 0)
-                      return "Price cannot be zero";
-                    return null;
-                  },
-                ),
-                TextFormField(
-                    initialValue: _editedProduct.description,
-                    decoration: InputDecoration(labelText: "Description"),
-                    textInputAction: TextInputAction.next,
-                    maxLines: 3,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _descriptionFocusNode,
-                    onSaved: (value) => _editedProduct =
-                        Product.cloneProductWithDescription(
-                            value, _editedProduct),
-                    validator: (value) {
-                      if (value.isEmpty || value.trim().isEmpty)
-                        return "Please Enter a Description";
-                      return null;
-                    }),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: 100,
-                      height: 100,
-                      margin: EdgeInsets.only(
-                        top: 8,
-                        right: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 1, color: Colors.grey)),
-                      child: _imageUrlController.text.isEmpty
-                          ? Text("Enter URL")
-                          : FittedBox(
-                              child: Image.network(_imageUrlController.text),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(labelText: "Image URL"),
-                        keyboardType: TextInputType.url,
-                        textInputAction: TextInputAction.done,
-                        controller: _imageUrlController,
-                        focusNode: _imageUrlFocusNode,
-                        onFieldSubmitted: (_) => _saveForm,
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                  key: _form,
+                  child: ListView(
+                    children: <Widget>[
+                      TextFormField(
+                        initialValue: _editedProduct.title,
+                        decoration: InputDecoration(
+                          labelText: "Title",
+                        ),
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (value) => FocusScope.of(context)
+                            .requestFocus(_priceFocusNode),
                         onSaved: (value) => _editedProduct =
-                            Product.cloneProductWithImage(
+                            Product.cloneProductWithTitle(
                                 value, _editedProduct),
                         validator: (value) {
                           if (value.isEmpty || value.trim().isEmpty)
-                            return "Please enter a URL";
+                            return "Please Enter valid Title";
                           return null;
                         },
                       ),
-                    ),
-                  ],
+                      TextFormField(
+                        initialValue: _editedProduct.price == 0
+                            ? ""
+                            : _editedProduct.price.toString(),
+                        decoration: InputDecoration(labelText: "Price"),
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.number,
+                        focusNode: _priceFocusNode,
+                        onFieldSubmitted: (value) => FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode),
+                        onSaved: (value) => _editedProduct =
+                            Product.cloneProductWithPrice(
+                                double.tryParse(value), _editedProduct),
+                        validator: (value) {
+                          if (value.isEmpty) return "Please Enter a price";
+                          if (double.tryParse(value) == null ||
+                              double.tryParse(value) < 0)
+                            return "Please enter Valid Price";
+                          if (double.tryParse(value) == 0)
+                            return "Price cannot be zero";
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                          initialValue: _editedProduct.description,
+                          decoration: InputDecoration(labelText: "Description"),
+                          textInputAction: TextInputAction.next,
+                          maxLines: 3,
+                          keyboardType: TextInputType.multiline,
+                          focusNode: _descriptionFocusNode,
+                          onSaved: (value) => _editedProduct =
+                              Product.cloneProductWithDescription(
+                                  value, _editedProduct),
+                          validator: (value) {
+                            if (value.isEmpty || value.trim().isEmpty)
+                              return "Please Enter a Description";
+                            return null;
+                          }),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            width: 100,
+                            height: 100,
+                            margin: EdgeInsets.only(
+                              top: 8,
+                              right: 10,
+                            ),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 1, color: Colors.grey)),
+                            child: _imageUrlController.text.isEmpty
+                                ? Text("Enter URL")
+                                : FittedBox(
+                                    child:
+                                        Image.network(_imageUrlController.text),
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              decoration:
+                                  InputDecoration(labelText: "Image URL"),
+                              keyboardType: TextInputType.url,
+                              textInputAction: TextInputAction.done,
+                              controller: _imageUrlController,
+                              focusNode: _imageUrlFocusNode,
+                              onFieldSubmitted: (_) => _saveForm,
+                              onSaved: (value) => _editedProduct =
+                                  Product.cloneProductWithImage(
+                                      value, _editedProduct),
+                              validator: (value) {
+                                if (value.isEmpty || value.trim().isEmpty)
+                                  return "Please enter a URL";
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ));
+              ));
   }
 }
