@@ -57,14 +57,15 @@ class ProductProvider with ChangeNotifier {
 
   /// Adding a new Item into the Existing List of products
   /// Calling the NotifyListeners is like calling setValue in Observers. But on all the member variables
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     const url = "https://flutter-shop-e0ed8.firebaseio.com/products.json";
-    return http.post(url,body: json.encode(product.toJsonMap())).then((response) {
-      print(json.decode(response.body));
+    try {
+      final result =
+          await http.post(url, body: json.encode(product.toJsonMap()));
       final _product = Product(
           title: product.title,
           description: product.description,
-          id: json.decode(response.body)['name'],
+          id: json.decode(result.body)['name'],
           imageUrl: product.imageUrl,
           price: product.price,
           isFavourite: product.isFavourite);
@@ -72,10 +73,9 @@ class ProductProvider with ChangeNotifier {
       _productList.add(_product);
       _idProductMap[_product.id] = _product;
       notifyListeners();
-    }).catchError((error) {
-      print(error);
+    } catch (error) {
       throw error;
-    });
+    }
   }
 
   Product getProduct(String id) {
@@ -84,15 +84,16 @@ class ProductProvider with ChangeNotifier {
   }
 
   void updateProduct(Product product) {
-    final prodIndex = _productList.indexWhere((element) => element.id == product.id);
-    if (prodIndex >= 0){
+    final prodIndex =
+        _productList.indexWhere((element) => element.id == product.id);
+    if (prodIndex >= 0) {
       _productList[prodIndex] = product;
       _idProductMap[product.id] = product;
       notifyListeners();
     }
   }
 
-  void deleteProduct(String id){
+  void deleteProduct(String id) {
     _productList.removeWhere((element) => element.id == id);
     _idProductMap.remove(id);
     notifyListeners();

@@ -58,14 +58,19 @@ class _EditProductRouteState extends State<EditProductRoute> {
     if (!_imageUrlFocusNode.hasFocus) setState(() {});
   }
 
-  void _saveForm() {
-    if (!_form.currentState.validate()) return;
+  Future<void> _saveForm() async {
+    if (!_form.currentState.validate())
+      return;
     _form.currentState.save();
-    final _productProvider =
-        Provider.of<ProductProvider>(context, listen: false);
+    final _productProvider = Provider.of<ProductProvider>(context, listen: false);
+
     if (_editedProduct.id == null) {
-      _productProvider.addProduct(_editedProduct).catchError((error) {
-        return showDialog(
+      setState(() => _isLoading = true);
+      try {
+        _productProvider.addProduct(_editedProduct);
+      }
+      catch (error) {
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
               title: Text('An error occurred!'),
@@ -73,18 +78,19 @@ class _EditProductRouteState extends State<EditProductRoute> {
               actions: <Widget>[
                 FlatButton(
                   child: Text('Okay'),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
+                  onPressed: () => Navigator.of(ctx).pop(),
                 )
               ]),
         );
-      }).then((value) {
+      }
+
+      finally {
         setState(() => _isLoading = false);
         Navigator.of(context).pop();
-      });
-      setState(() => _isLoading = true);
-    } else {
+      }
+    }
+
+    else {
       _productProvider.updateProduct(_editedProduct);
       Navigator.of(context).pop();
     }
