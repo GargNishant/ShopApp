@@ -16,13 +16,28 @@ class _EditProductRouteState extends State<EditProductRoute> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
+  final _imageUrlFocusNode = FocusNode();
 
   @override
   void dispose() {
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
     _imageUrlController.dispose();
+    _imageUrlFocusNode.removeListener(_updateImageUrl);
+    _imageUrlFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    _imageUrlFocusNode.addListener(_updateImageUrl);
+    super.initState();
+  }
+
+  void _updateImageUrl(){
+    if(!_imageUrlFocusNode.hasFocus){
+      setState(() {});
+    }
   }
 
   @override
@@ -82,6 +97,7 @@ class _EditProductRouteState extends State<EditProductRoute> {
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlController,
+                      focusNode: _imageUrlFocusNode,
                     ),
                   ),
                 ],
