@@ -72,4 +72,13 @@ class ProductProvider with ChangeNotifier {
     if (_idProductMap[id] is Product) return _idProductMap[id];
     return null;
   }
+
+  void updateProduct(Product product) {
+    final prodIndex = _productList.indexWhere((element) => element.id == product.id);
+    if (prodIndex >= 0){
+      _productList[prodIndex] = product;
+      _idProductMap[product.id] = product;
+      notifyListeners();
+    }
+  }
 }
