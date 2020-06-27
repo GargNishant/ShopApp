@@ -43,8 +43,10 @@ class _EditProductRouteState extends State<EditProductRoute> {
   }
 
   void _saveForm() {
-    _form.currentState.save();
-    print(_editedProduct.title);
+    if(_form.currentState.validate()) {
+      _form.currentState.save();
+      print(_editedProduct.title);
+    }
   }
 
   @override
@@ -66,7 +68,7 @@ class _EditProductRouteState extends State<EditProductRoute> {
           child: ListView(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: "Title"),
+                decoration: InputDecoration(labelText: "Title",),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (value) =>
                     FocusScope.of(context).requestFocus(_priceFocusNode),
@@ -77,6 +79,11 @@ class _EditProductRouteState extends State<EditProductRoute> {
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id,
                       description: _editedProduct.description);
+                },
+                validator: (value){
+                  if(value.isEmpty)
+                    return "Please Enter valid Title";
+                  return null;
                 },
               ),
               TextFormField(
@@ -94,6 +101,7 @@ class _EditProductRouteState extends State<EditProductRoute> {
                         id: _editedProduct.id,
                         description: _editedProduct.description);
                   }),
+
               TextFormField(
                   decoration: InputDecoration(labelText: "Description"),
                   textInputAction: TextInputAction.next,
