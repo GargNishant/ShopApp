@@ -8,45 +8,6 @@ class ProductProvider with ChangeNotifier {
   List<Product> _productList = List();
   Map<String, Product> _idProductMap = Map();
 
-  ProductProvider() {
-    _productList.add(Product(
-      id: 'p1',
-      title: 'Red Shirt',
-      description: 'A red shirt - it is pretty red!',
-      price: 29.99,
-      imageUrl:
-          'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
-    ));
-    _productList.add(Product(
-      id: 'p2',
-      title: 'Trousers',
-      description: 'A nice pair of trousers.',
-      price: 59.99,
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
-    ));
-    _productList.add(Product(
-      id: 'p3',
-      title: 'Yellow Scarf',
-      description: 'Warm and cozy - exactly what you need for the winter.',
-      price: 19.99,
-      imageUrl:
-          'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
-    ));
-    _productList.add(Product(
-      id: 'p4',
-      title: 'A Pan',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-    ));
-    _idProductMap[_productList[0].id] = _productList[0];
-    _idProductMap[_productList[1].id] = _productList[1];
-    _idProductMap[_productList[2].id] = _productList[2];
-    _idProductMap[_productList[3].id] = _productList[3];
-  }
-
   List<Product> get productList {
     return [..._productList];
   }
@@ -97,5 +58,34 @@ class ProductProvider with ChangeNotifier {
     _productList.removeWhere((element) => element.id == id);
     _idProductMap.remove(id);
     notifyListeners();
+  }
+
+  Future<void> fetchData() async {
+    const url = "https://flutter-shop-e0ed8.firebaseio.com/products.json";
+    try {
+      final _response = await http.get(url);
+      print(json.decode(_response.body).runtimeType);
+      final extractedData = json.decode(_response.body) as Map<String, dynamic>;
+      final List<Product> loadedList = List();
+      final Map<String, Product> map = Map();
+
+      extractedData.forEach((prodId, prodData) {
+        final product = Product(
+        id: prodId,
+        title: prodData['title'],
+        description: prodData['description'],
+        imageUrl: prodData['imageUrl'],
+        price: prodData['price'],
+        isFavourite: prodData['isFavourite']);
+
+        loadedList.add(product);
+        map[prodId] = product;
+      });
+      _productList.addAll(loadedList);
+      _idProductMap.addAll(map);
+
+    } catch (error) {
+      throw error;
+    }
   }
 }
