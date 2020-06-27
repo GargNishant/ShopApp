@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:shopapp/repository/product.dart';
+import 'package:shopapp/routes/edit_product_route.dart';
 
 class UserProductWidget extends StatelessWidget {
   final Product _product;
@@ -20,7 +21,9 @@ class UserProductWidget extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(EditProductRoute.routeName,arguments: _product.id);
+              },
               color: Theme.of(context).primaryColor,
             ),
             IconButton(
