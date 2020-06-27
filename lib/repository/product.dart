@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Product with ChangeNotifier{
+class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
@@ -17,7 +17,47 @@ class Product with ChangeNotifier{
     this.isFavourite = false,
   });
 
-  void toggleFavoriteStatus(){
+  static Product cloneProductWithDescription(String description, Product product) {
+    return Product(
+        id: product.id,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        description: description,
+        title: product.title,
+        isFavourite: product.isFavourite);
+  }
+
+  static Product cloneProductWithTitle(String title, Product product) {
+    return Product(
+        id: product.id,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        description: product.description,
+        title: title,
+        isFavourite: product.isFavourite);
+  }
+
+  static Product cloneProductWithPrice(double price, Product product) {
+    return Product(
+        id: product.id,
+        price: price,
+        imageUrl: product.imageUrl,
+        description: product.description,
+        title: product.title,
+        isFavourite: product.isFavourite);
+  }
+
+  static Product cloneProductWithImage(String imageUrl, Product product) {
+    return Product(
+        id: product.id,
+        price: product.price,
+        imageUrl: imageUrl,
+        description: product.description,
+        title: product.title,
+        isFavourite: product.isFavourite);
+  }
+
+  void toggleFavoriteStatus() {
     isFavourite = !isFavourite;
     notifyListeners();
   }
