@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:shopapp/repository/product.dart';
+import 'package:shopapp/repository/product_provider.dart';
 
 class EditProductRoute extends StatefulWidget {
   final Product product;
@@ -45,7 +47,9 @@ class _EditProductRouteState extends State<EditProductRoute> {
   void _saveForm() {
     if(_form.currentState.validate()) {
       _form.currentState.save();
-      print(_editedProduct.title);
+      final _productProvider = Provider.of<ProductProvider>(context, listen: false);
+      _productProvider.addProduct(_editedProduct);
+      Navigator.of(context).pop();
     }
   }
 

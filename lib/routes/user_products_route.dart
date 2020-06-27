@@ -13,10 +13,6 @@ class UserProductsRoute extends StatelessWidget {
     final _productList = _productProvider.productList;
     return Scaffold(
         appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
             title: Text("Your Products"),
             actions: <Widget>[
               IconButton(

@@ -28,7 +28,7 @@ class ProductProvider with ChangeNotifier {
       description: 'Warm and cozy - exactly what you need for the winter.',
       price: 19.99,
       imageUrl:
-      'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
+          'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
     ));
     _productList.add(Product(
       id: 'p4',
@@ -36,7 +36,7 @@ class ProductProvider with ChangeNotifier {
       description: 'Prepare any meal you want.',
       price: 49.99,
       imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ));
     _idProductMap[_productList[0].id] = _productList[0];
     _idProductMap[_productList[1].id] = _productList[1];
@@ -48,19 +48,28 @@ class ProductProvider with ChangeNotifier {
     return [..._productList];
   }
 
-  List<Product> get favouritesList{
+  List<Product> get favouritesList {
     return _productList.where((element) => element.isFavourite).toList();
   }
 
   /// Adding a new Item into the Existing List of products
   /// Calling the NotifyListeners is like calling setValue in Observers. But on all the member variables
   void addProduct(Product product) {
+    final _product = Product(
+        title: product.title,
+        description: product.description,
+        id: DateTime.now().toString(),
+        imageUrl: product.imageUrl,
+        price: product.price,
+        isFavourite: product.isFavourite);
+
+    _productList.add(_product);
+    _idProductMap[_product.id] = _product;
     notifyListeners();
   }
 
-  Product getProduct(String id){
-    if(_idProductMap[id] is Product)
-      return _idProductMap[id];
+  Product getProduct(String id) {
+    if (_idProductMap[id] is Product) return _idProductMap[id];
     return null;
   }
 }
