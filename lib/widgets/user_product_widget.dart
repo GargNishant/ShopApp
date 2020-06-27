@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopapp/repository/product.dart';
+import 'package:shopapp/repository/product_provider.dart';
 import 'package:shopapp/routes/edit_product_route.dart';
 
 class UserProductWidget extends StatelessWidget {
@@ -21,14 +22,16 @@ class UserProductWidget extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {
-                Navigator.of(context).pushNamed(EditProductRoute.routeName,arguments: _product.id);
-              },
+              onPressed: () => Navigator.of(context).pushNamed(
+                  EditProductRoute.routeName,
+                  arguments: _product.id),
               color: Theme.of(context).primaryColor,
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: () {},
+              onPressed: () =>
+                  Provider.of<ProductProvider>(context, listen: false)
+                      .deleteProduct(_product.id),
               color: Theme.of(context).errorColor,
             ),
           ],
