@@ -74,7 +74,7 @@ class _EditProductRouteState extends State<EditProductRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Edit Product"),
+          title: Text(_editedProduct.id == null ? "Edit Product": "Add Product"),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.save),
