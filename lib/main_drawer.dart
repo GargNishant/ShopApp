@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shopapp/routes/order_route.dart';
+import 'package:shopapp/routes/user_products_route.dart';
 
-class MainDrawer extends StatelessWidget{
-
+class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -25,8 +25,15 @@ class MainDrawer extends StatelessWidget{
             leading: Icon(Icons.payment),
             title: Text('Orders'),
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(OrdersRoute.routeName);
+              Navigator.of(context).pushReplacementNamed(OrdersRoute.routeName);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.edit),
+            title: Text('Manage Products'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(UserProductsRoute.routeName);
             },
           ),
         ],
