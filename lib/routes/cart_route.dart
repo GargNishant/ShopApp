@@ -23,40 +23,65 @@ class CartRoute extends StatelessWidget {
               padding: EdgeInsets.all(8),
               child: Row(
                 children: <Widget>[
-                  Text(
-                    "Total",
-                    style: TextStyle(fontSize: 20),
-                  ),
+                  Text("Total", style: TextStyle(fontSize: 20)),
                   Spacer(),
                   Chip(
                     label: Text("\$${_cartProvider.totalAmount}"),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    child: Text("Order Now"),
-                    onPressed: () {
-                      Provider.of<OrderProvider>(context,listen: false).addOrder(_cartItemList, _cartProvider.totalAmount);
-                      _cartProvider.clearCart();
-                    },
-                    textColor: Theme.of(context).primaryColor,
-                  ),
+                  OrderButton(cartItemList: _cartItemList, cartProvider: _cartProvider)
                 ],
               ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: _cartProvider.itemCount,
-              itemBuilder: (context,index) {
-                return CartItemWidget(_cartItemList[index],_cartProdIdList[index]);
+              itemBuilder: (context, index) {
+                return CartItemWidget(
+                    _cartItemList[index], _cartProdIdList[index]);
               },
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required List<CartItem> cartItemList,
+    @required CartProvider cartProvider,
+  })  : _cartItemList = cartItemList,
+        _cartProvider = cartProvider,
+        super(key: key);
+
+  final List<CartItem> _cartItemList;
+  final CartProvider _cartProvider;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isLoading ? CircularProgressIndicator() :Text("Order Now"),
+      onPressed: (widget._cartItemList.length <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() => _isLoading = true);
+              await Provider.of<OrderProvider>(context, listen: false).addOrder(
+                  widget._cartItemList, widget._cartProvider.totalAmount);
+              widget._cartProvider.clearCart();
+              setState(() => _isLoading = false);
+            },
+      textColor: Theme.of(context).primaryColor,
     );
   }
 }
