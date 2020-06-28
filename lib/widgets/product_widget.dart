@@ -14,6 +14,7 @@ class ProductWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final _product = Provider.of<Product>(context, listen: false);
     final _cart = Provider.of<CartProvider>(context, listen: false);
+    final _scaffold = Scaffold.of(context);
 
     return GridTile(
       child: GestureDetector(
@@ -27,12 +28,27 @@ class ProductWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         leading: Consumer<Product>(
-            builder: (ctx, productInstance, child) => IconButton(
-                  icon: Icon(productInstance.isFavourite
-                      ? Icons.favorite
-                      : Icons.favorite_border),
-                  onPressed: productInstance.toggleFavoriteStatus,
-                )),
+          builder: (ctx, productInstance, child) => IconButton(
+            icon: Icon(productInstance.isFavourite
+                ? Icons.favorite
+                : Icons.favorite_border),
+            onPressed: () async {
+              try {
+                await productInstance.toggleFavoriteStatus();
+              } catch (error) {
+                print(error.toString());
+                _scaffold.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Updating failed!',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
+        ),
         trailing: IconButton(
           icon: Icon(Icons.shopping_cart),
           onPressed: () {
