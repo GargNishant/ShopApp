@@ -62,7 +62,7 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Object toJsonMap() {
+  Map<String,Object> toJsonMap() {
     Map<String, Object> map = Map();
     map["title"] = this.title;
     map["price"] = this.price;
