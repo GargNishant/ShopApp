@@ -65,7 +65,7 @@ class Product with ChangeNotifier {
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
-    final url = "https://flutter-shop-e0ed8.firebaseio.com/products/$id.son";
+    final url = "https://flutter-shop-e0ed8.firebaseio.com/products/$id.json";
     try {
       final _response = await http.patch(url, body: json.encode({"isFavourite": isFavourite}));
 
