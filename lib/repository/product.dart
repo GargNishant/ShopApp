@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shopapp/exceptions/http_exception.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -57,9 +61,22 @@ class Product with ChangeNotifier {
         isFavourite: product.isFavourite);
   }
 
-  void toggleFavoriteStatus() {
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
+    final url = "https://flutter-shop-e0ed8.firebaseio.com/products/$id.son";
+    try {
+      final _response = await http.patch(url, body: json.encode({"isFavourite": isFavourite}));
+
+      if(_response.statusCode >= 400)
+        throw HttpException("Unable to update Value");
+
+    } catch(error){
+      isFavourite = oldStatus;
+      notifyListeners();
+      throw throw HttpException("Unable to update Value");
+    }
   }
 
   Map<String,Object> toJsonMap() {
