@@ -20,6 +20,11 @@ class CartItem {
     map['price'] = this.price;
     return map;
   }
+
+  static CartItem fromJsonMap(Map<String, dynamic> map){
+    final cartItem = CartItem(id: map['id'], price: map['price'], title: map['title'], quantity: map['quantity']);
+    return cartItem;
+  }
 }
 
 class CartProvider with ChangeNotifier {
