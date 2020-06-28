@@ -59,41 +59,34 @@ class _EditProductRouteState extends State<EditProductRoute> {
   }
 
   Future<void> _saveForm() async {
-    if (!_form.currentState.validate())
-      return;
+    if (!_form.currentState.validate()) return;
     _form.currentState.save();
-    final _productProvider = Provider.of<ProductProvider>(context, listen: false);
+    setState(() => _isLoading = true);
 
+    final _productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
     if (_editedProduct.id == null) {
-      setState(() => _isLoading = true);
       try {
-        _productProvider.addProduct(_editedProduct);
-      }
-      catch (error) {
+        await _productProvider.addProduct(_editedProduct);
+      } catch (error) {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-              title: Text('An error occurred!'),
-              content: Text('Something went wrong.'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Okay'),
-                  onPressed: () => Navigator.of(ctx).pop(),
-                )
-              ]),
+            title: Text('An error occurred!'),
+            content: Text('Something went wrong.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: () => Navigator.of(ctx).pop(),
+              )
+            ],
+          ),
         );
       }
-
-      finally {
-        setState(() => _isLoading = false);
-        Navigator.of(context).pop();
-      }
-    }
-
-    else {
-      _productProvider.updateProduct(_editedProduct);
-      Navigator.of(context).pop();
-    }
+    } else
+      await _productProvider.updateProduct(_editedProduct);
+    setState(() => _isLoading = false);
+    Navigator.of(context).pop();
   }
 
   @override
