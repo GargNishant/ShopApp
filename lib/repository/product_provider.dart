@@ -100,7 +100,9 @@ class ProductProvider with ChangeNotifier {
         loadedList.add(product);
         map[prodId] = product;
       });
+      _productList.clear();
       _productList.addAll(loadedList);
+      _idProductMap.clear();
       _idProductMap.addAll(map);
 
     } catch (error) {
