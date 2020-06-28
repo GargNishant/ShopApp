@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shopapp/exceptions/http_exception.dart';
 import 'package:shopapp/repository/product.dart';
 import 'package:http/http.dart' as http;
 
@@ -44,20 +45,37 @@ class ProductProvider with ChangeNotifier {
     return null;
   }
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     final prodIndex =
         _productList.indexWhere((element) => element.id == product.id);
     if (prodIndex >= 0) {
+      final url = "https://flutter-shop-e0ed8.firebaseio.com/products/${product.id}+.json";
+
+      var productJson = product.toJsonMap();
+      productJson.remove("id");
+      productJson.remove("isFavourite");
+
+      await http.patch(url,body: productJson);
       _productList[prodIndex] = product;
       _idProductMap[product.id] = product;
       notifyListeners();
     }
   }
 
-  void deleteProduct(String id) {
-    _productList.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = "https://flutter-shop-e0ed8.firebaseio.com/products/$id.json";
+    final existingIndex = _productList.indexWhere((prod) => prod.id == id);
+    var existingProd = _productList[existingIndex];
+
+    _productList.removeAt(existingIndex);
     _idProductMap.remove(id);
     notifyListeners();
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _productList.insert(existingIndex, existingProd);
+      notifyListeners();
+      throw HttpException('Could not delete product.');
+    }
   }
 
   Future<void> fetchData() async {
@@ -68,7 +86,8 @@ class ProductProvider with ChangeNotifier {
       final extractedData = json.decode(_response.body) as Map<String, dynamic>;
       final List<Product> loadedList = List();
       final Map<String, Product> map = Map();
-
+      if (extractedData == null)
+        return;
       extractedData.forEach((prodId, prodData) {
         final product = Product(
         id: prodId,
