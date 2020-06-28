@@ -11,6 +11,15 @@ class CartItem {
       @required this.title,
       @required this.quantity,
       @required this.price});
+
+  Map<String, Object> toJsonMap(){
+    Map<String, Object> map = Map();
+    map['id'] = this.id;
+    map['title'] = this.title;
+    map['quantity'] = this.quantity;
+    map['price'] = this.price;
+    return map;
+  }
 }
 
 class CartProvider with ChangeNotifier {
